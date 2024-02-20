@@ -1,8 +1,26 @@
+import avatar from '../images/avatar.jpg';
+import logo from '../images/logo.svg';
+
+document.addEventListener('DOMContentLoaded', function() {
+  const profileImageDiv = document.querySelector('.profile__image');
+  const logoImage = document.querySelector('.logo.header__logo');
+
+  if (profileImageDiv) {
+    profileImageDiv.style.backgroundImage = `url('${avatar}')`;
+  }
+
+  if (logoImage) {
+    logoImage.src = logo;
+  }
+});
+
 
 import "../styles/index.css";
 import { createCard, deleteCard } from "./card.js";
 import { openPopup, closePopup, closePopupOverlay } from "./modal.js";
 import { initialCards } from './cards.js';
+
+const placesList = document.querySelector('.places__list');
 
 const profileEditPopup = document.querySelector(".popup_type_edit");
 const profileEditForm = profileEditPopup.querySelector(".popup__form");
@@ -24,7 +42,6 @@ const imagePopupImg = imagePreviewPopup.querySelector(".popup__image");
 const imagePopupTitle = imagePreviewPopup.querySelector(".popup__caption");
 
 function renderCards() {
-  const placesList = document.querySelector('.places__list');
   initialCards.forEach((card) => {
     const cardElement = createCard(card, deleteCard, openImagePopup);
     placesList.append(cardElement);
@@ -38,7 +55,6 @@ function addCard(event) {
     link: newCardImageUrlInput.value
   };
   const card = createCard(cardData, deleteCard, openImagePopup);
-  const placesList = document.querySelector('.places__list');
   placesList.prepend(card);
   closePopup(addCardPopup);
   addCardForm.reset();
@@ -51,21 +67,16 @@ function openImagePopup(cardData) {
   openPopup(imagePreviewPopup);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  renderCards();
-  addCardButton.addEventListener("click", () => openPopup(addCardPopup));
-  editProfileButton.addEventListener("click", () => {
-    profileNameInput.value = profileNameText.textContent;
-    profileJobInput.value = profileDecrtiption.textContent;
-    openPopup(profileEditPopup);
-  });
-  closeEditProfilePopupButton.addEventListener("click", () => closePopup(profileEditPopup));
-  closePopupOverlay(profileEditPopup, closePopup);
-  closePopupOverlay(addCardPopup, closePopup);
-  closePopupOverlay(imagePreviewPopup, closePopup);
-  profileEditForm.addEventListener("submit", profileEditFormSubmit);
-  addCardForm.addEventListener("submit", addCard);
+renderCards();
+addCardButton.addEventListener("click", () => openPopup(addCardPopup));
+editProfileButton.addEventListener("click", () => {
+  profileNameInput.value = profileNameText.textContent;
+  profileJobInput.value = profileDecrtiption.textContent;
+  openPopup(profileEditPopup);
 });
+
+profileEditForm.addEventListener("submit", profileEditFormSubmit);
+addCardForm.addEventListener("submit", addCard);
 
 closePopupOverlay();
 
@@ -76,6 +87,9 @@ function profileEditFormSubmit(event) {
   closePopup(profileEditPopup);
 }
 
-export {openImagePopup};
+const profileImageDiv = document.querySelector('.profile__image');
+const logoImage = document.querySelector('.logo.header__logo');
+
+
 
 

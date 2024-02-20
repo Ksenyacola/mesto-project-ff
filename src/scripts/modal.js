@@ -28,6 +28,6 @@ function closeEscPopup(event) {
 }
 
 
-document.addEventListener('DOMContentLoaded', closePopupOverlay);
+
 
 export { openPopup, closePopup, closePopupOverlay };
