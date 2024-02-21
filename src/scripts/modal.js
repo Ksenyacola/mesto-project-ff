@@ -8,6 +8,8 @@ function closePopup(popup) {
     document.removeEventListener("keydown", closeEscPopup);
 }
 
+document.addEventListener('DOMContentLoaded', () => closePopupOverlay());
+
 function closePopupOverlay() {
     document.querySelectorAll(".popup").forEach(popupElement => {
         popupElement.addEventListener("click", function(event) {
@@ -27,7 +29,15 @@ function closeEscPopup(event) {
     }
 }
 
+function openImagePopup(cardData) {
+    const imagePopup = document.querySelector('.popup_type_image');
+    const imagePopupTitle = imagePopup.querySelector('.popup__caption');
+    const imagePopupImg = imagePopup.querySelector('.popup__image');
 
+    imagePopupImg.src = cardData.link;
+    imagePopupImg.alt = `Изображение ${cardData.name}`;
+    imagePopupTitle.textContent = cardData.name;
+    openPopup(imagePopup);
+}
 
-
-export { openPopup, closePopup, closePopupOverlay };
+export { openPopup, closePopup, closePopupOverlay, openImagePopup };
