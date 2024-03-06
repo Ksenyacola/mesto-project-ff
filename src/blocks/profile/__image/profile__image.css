@@ -20,3 +20,28 @@
     margin-right: 0;
   }
 }
+
+.profile__image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile__image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  bottom: 0;
+  background-image: url('../../../images/edit-icon.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background-size: 15%;
+}
+
+.profile__image-container:hover .profile__image::after {
+  opacity: 1;
+}
