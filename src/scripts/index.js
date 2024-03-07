@@ -1,12 +1,20 @@
 import "../styles/index.css";
-import { createCard, handleCardDeletion, handleCardLikeToggle } from "./card.js";
+import {
+  createCard,
+  handleCardDeletion,
+  handleCardLikeToggle,
+} from "./card.js";
 import {
   openPopup,
   closePopup,
-  closePopupOnEsc,
   createClosePopupHandler,
+  openImagePopup,
 } from "./modal.js";
-import { enableValidation, clearValidation } from "./validation.js";
+import {
+  enableValidation,
+  clearValidation,
+  validationConfig,
+} from "./validation.js";
 import {
   fetchInitialCards,
   addNewCard,
@@ -15,16 +23,6 @@ import {
   updateUserProfile,
   updateUserAvatar,
 } from "./api.js";
-
-// Валидация
-const validationConfig = {
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
-};
 
 const userName = document.querySelector(".profile__title");
 const userAbout = document.querySelector(".profile__description");
@@ -48,14 +46,8 @@ const profileEditButton = document.querySelector(".profile__edit-button");
 
 const cardsContainer = document.querySelector(".places__list");
 
-const popupImage = document.querySelector(".popup_type_image");
-const image = popupImage.querySelector(".popup__image");
-const caption = popupImage.querySelector(".popup__caption");
-
 const addCardPopup = document.querySelector(".popup_type_new-card");
-const cardNameInput = document.querySelector(
-  ".popup__input_type_card-name"
-);
+const cardNameInput = document.querySelector(".popup__input_type_card-name");
 const cardUrlInput = document.querySelector(".popup__input_type_url");
 const newPlaceFormPopup = document.querySelector("form[name='new-place']");
 
@@ -66,7 +58,6 @@ Promise.all([fetchInitialCards(), fetchUserProfile()])
     userName.textContent = results[1].name;
     userAbout.textContent = results[1].about;
     userAvatar.style.backgroundImage = `url('${results[1].avatar}')`;
-
 
     results[0].forEach((card) => {
       const newCard = createCard(
@@ -91,18 +82,13 @@ const toggleSavingIndicator = (isLoading, button) => {
   }
 };
 
-const openImagePopup = (link, name) => {
-  image.src = link;
-  image.alt = name;
-  caption.textContent = name;
-
-  openPopup(popupImage);
-};
-
 const openProfileEditPopup = () => {
   openPopup(editProfilePopup);
+
   popupInputTypeName.value = userName.textContent;
   popupInputTypeDescription.value = userAbout.textContent;
+
+  clearValidation(validationConfig, profileForm);
 };
 
 const handleProfileChangeSubmit = (evt) => {
@@ -144,7 +130,12 @@ const handleNewCardAdd = (evt) => {
 
   addNewCard(newCardData.name, newCardData.link)
     .then((data) => {
-      const newCard = createCard(data, handleCardDeletion, handleCardLikeToggle, openImagePopup);
+      const newCard = createCard(
+        data,
+        handleCardDeletion,
+        handleCardLikeToggle,
+        openImagePopup
+      );
       cardsContainer.prepend(newCard);
       closePopup(addCardPopup);
       newPlaceFormPopup.reset();
@@ -157,7 +148,6 @@ const handleNewCardAdd = (evt) => {
     });
 };
 
-// Обновление аватара
 const handleAvatarSubmit = (evt) => {
   evt.preventDefault();
   const avatarLink = avatarUrlInput.value;
@@ -177,7 +167,6 @@ const handleAvatarSubmit = (evt) => {
     });
 };
 
-// Функция открытия попапа с аватаркой
 const openAvatarPopup = () => {
   openPopup(updateAvatarPopup);
 };
@@ -191,11 +180,4 @@ updateAvatarPopup.addEventListener("submit", handleAvatarSubmit);
 
 enableValidation(validationConfig);
 
-export {
-  cardsContainer,
-  addCardPopup,
-  openImagePopup,
-  handleNewCardAdd,
-  validationConfig,
-};
-
+export { openImagePopup };

@@ -1,5 +1,9 @@
-import { openImagePopup } from "./index.js";
-import { removeCardFromServer, likeCardOnServer, unlikeCardOnServer } from "./api.js";
+import {
+  removeCardFromServer,
+  likeCardOnServer,
+  unlikeCardOnServer,
+} from "./api.js";
+import { openImagePopup } from "./modal.js";
 
 const cardTemplate = document.querySelector("#card-template");
 const templateCard = cardTemplate.content.querySelector(".card");
@@ -14,7 +18,13 @@ const handleCardDeletion = (card, cardId) => {
     });
 };
 
-const createCard = (item, handleCardDeletion, handleCardLikeToggle, openImagePopup, myID) => {
+const createCard = (
+  item,
+  handleCardDeletion,
+  handleCardLikeToggle,
+  openImagePopup,
+  myID
+) => {
   const newCard = templateCard.cloneNode(true);
   const cardImage = newCard.querySelector(".card__image");
   const cardTitle = newCard.querySelector(".card__title");
@@ -38,6 +48,9 @@ const createCard = (item, handleCardDeletion, handleCardLikeToggle, openImagePop
   if (item.likes.some(({ _id }) => _id === myID)) {
     likeButton.classList.add("card__like-button_is-active");
   }
+
+  deleteButton.style.display = "none";
+
   if (item.owner._id === myID) {
     deleteButton.style.display = "block";
     deleteButton.addEventListener("click", () => {
