@@ -88,7 +88,7 @@ const openProfileEditPopup = () => {
   popupInputTypeName.value = userName.textContent;
   popupInputTypeDescription.value = userAbout.textContent;
 
-  clearValidation(validationConfig, profileForm);
+  clearValidation(profileForm);
 };
 
 const handleProfileChangeSubmit = (evt) => {
