@@ -180,4 +180,3 @@ updateAvatarPopup.addEventListener("submit", handleAvatarSubmit);
 
 enableValidation(validationConfig);
 
-export { openImagePopup };
