@@ -17,3 +17,8 @@
     padding: 30px 20px;
   }
 }
+
+
+.popup__error_visible {
+  color: red; 
+}

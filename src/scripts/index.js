@@ -8,12 +8,10 @@ import {
   openPopup,
   closePopup,
   createClosePopupHandler,
-  openImagePopup,
 } from "./modal.js";
 import {
   enableValidation,
-  clearValidation,
-  validationConfig,
+  clearValidation
 } from "./validation.js";
 import {
   fetchInitialCards,
@@ -23,6 +21,17 @@ import {
   updateUserProfile,
   updateUserAvatar,
 } from "./api.js";
+
+
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
 
 const userName = document.querySelector(".profile__title");
 const userAbout = document.querySelector(".profile__description");
@@ -50,16 +59,19 @@ const addCardPopup = document.querySelector(".popup_type_new-card");
 const cardNameInput = document.querySelector(".popup__input_type_card-name");
 const cardUrlInput = document.querySelector(".popup__input_type_url");
 const newPlaceFormPopup = document.querySelector("form[name='new-place']");
+let myID = null;
+
 
 Promise.all([fetchInitialCards(), fetchUserProfile()])
   .then((results) => {
-    const myID = results[1]._id;
+    myID = results[1]._id;
 
     userName.textContent = results[1].name;
     userAbout.textContent = results[1].about;
     userAvatar.style.backgroundImage = `url('${results[1].avatar}')`;
 
     results[0].forEach((card) => {
+
       const newCard = createCard(
         card,
         handleCardDeletion,
@@ -71,8 +83,11 @@ Promise.all([fetchInitialCards(), fetchUserProfile()])
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.error(err);
   });
+
+
+
 
 const toggleSavingIndicator = (isLoading, button) => {
   if (isLoading) {
@@ -88,7 +103,7 @@ const openProfileEditPopup = () => {
   popupInputTypeName.value = userName.textContent;
   popupInputTypeDescription.value = userAbout.textContent;
 
-  clearValidation(profileForm);
+  clearValidation(profileForm, validationConfig);
 };
 
 const handleProfileChangeSubmit = (evt) => {
@@ -134,11 +149,16 @@ const handleNewCardAdd = (evt) => {
         data,
         handleCardDeletion,
         handleCardLikeToggle,
-        openImagePopup
+        openImagePopup,
+        myID
       );
       cardsContainer.prepend(newCard);
       closePopup(addCardPopup);
       newPlaceFormPopup.reset();
+
+      const submitButton = newPlaceFormPopup.querySelector('.popup__button');
+      submitButton.disabled = true;
+      submitButton.classList.add('popup__button_disabled');
     })
     .catch((err) => {
       console.error(err);
@@ -146,6 +166,27 @@ const handleNewCardAdd = (evt) => {
     .finally(() => {
       toggleSavingIndicator(false, evt.submitter);
     });
+};
+
+
+function updateSubmitButtonStateAfterReset(form) {
+  const submitButton = form.querySelector('.popup__button');
+  const inputList = Array.from(form.querySelectorAll('.popup__input'));
+  const isFormInvalid = inputList.some(input => !input.validity.valid);
+  submitButton.disabled = isFormInvalid;
+  submitButton.classList.toggle('popup__button_disabled', isFormInvalid);
+}
+
+const openImagePopup = (link, name) => {
+  const popupImage = document.querySelector(".popup_type_image");
+  const image = popupImage.querySelector(".popup__image");
+  const caption = popupImage.querySelector(".popup__caption");
+
+  image.src = link;
+  image.alt = name;
+  caption.textContent = name;
+
+  openPopup(popupImage);
 };
 
 const handleAvatarSubmit = (evt) => {

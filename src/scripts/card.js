@@ -3,7 +3,6 @@ import {
   likeCardOnServer,
   unlikeCardOnServer,
 } from "./api.js";
-import { openImagePopup } from "./modal.js";
 
 const cardTemplate = document.querySelector("#card-template");
 const templateCard = cardTemplate.content.querySelector(".card");
@@ -18,13 +17,7 @@ const handleCardDeletion = (card, cardId) => {
     });
 };
 
-const createCard = (
-  item,
-  handleCardDeletion,
-  handleCardLikeToggle,
-  openImagePopup,
-  myID
-) => {
+const createCard = (item, handleCardDeletion, handleCardLikeToggle, openImagePopup, myID) => {
   const newCard = templateCard.cloneNode(true);
   const cardImage = newCard.querySelector(".card__image");
   const cardTitle = newCard.querySelector(".card__title");
@@ -35,7 +28,7 @@ const createCard = (
   cardImage.src = item.link;
   cardImage.alt = item.name;
   cardTitle.textContent = item.name;
-  cardLikes.textContent = item.likes.length;
+  cardLikes.textContent = item.likes.length.toString();
 
   likeButton.addEventListener("click", () => {
     handleCardLikeToggle(likeButton, item._id, cardLikes, myID);
@@ -45,20 +38,19 @@ const createCard = (
     openImagePopup(item.link, item.name);
   });
 
-  if (item.likes.some(({ _id }) => _id === myID)) {
+  if (item.likes.some(user => user._id === myID)) {
     likeButton.classList.add("card__like-button_is-active");
   }
 
-  deleteButton.style.display = "none";
+  deleteButton.style.display = item.owner._id === myID ? "block" : "none";
 
   if (item.owner._id === myID) {
-    deleteButton.style.display = "block";
-    deleteButton.addEventListener("click", () => {
-      handleCardDeletion(newCard, item._id);
-    });
+    deleteButton.addEventListener("click", () => handleCardDeletion(newCard, item._id));
   }
+
   return newCard;
 };
+
 
 const handleCardLikeToggle = (likeButton, cardId, cardLikes, myID) => {
   if (likeButton.classList.contains("card__like-button_is-active")) {
